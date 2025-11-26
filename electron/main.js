@@ -95,7 +95,8 @@ function createWindow(port) {
   
   mainWindow.loadFile(frontendPath);
 
-  // Open DevTools in development
+  // Open DevTools for development/debugging
+  // In production, consider removing this or adding a condition
   mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', () => {

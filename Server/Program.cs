@@ -1,6 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS for React frontend
+// NOTE: This is a sample app with AllowAll CORS policy for simplicity.
+// In production, restrict to specific origins using WithOrigins("http://localhost:5173")
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
