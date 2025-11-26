@@ -51,10 +51,11 @@ npm run build
 cd ..
 ```
 
-**3. Install Electron Dependencies:**
+**3. Build Electron TypeScript:**
 ```bash
 cd electron
 npm install
+npm run build
 cd ..
 ```
 
@@ -95,11 +96,12 @@ The C# server provides the following endpoints:
 
 ## How It Works
 
-1. **Electron Startup**: The Electron main process (`electron/main.js`) starts first
-2. **C# Server**: Electron spawns the C# server process on a random port (5001-65535)
-3. **Frontend Loading**: Electron loads the built React app from `frontend/dist`
-4. **API Communication**: The React app communicates with the C# server via the injected API_URL
-5. **Lifecycle Management**: When Electron closes, it automatically stops the C# server
+1. **Electron Startup**: The Electron main process (`electron/dist/main.js` compiled from TypeScript) starts first
+2. **C# Server**: Electron spawns the C# server process with port 0 (OS assigns a random available port)
+3. **Port Discovery**: The server outputs `SERVER_PORT:XXXXX` to stdout, which Electron parses to get the actual port
+4. **Frontend Loading**: Electron loads the built React app from `frontend/dist`
+5. **API Communication**: The React app communicates with the C# server via `window.electron.apiUrl` exposed through Electron's preload script
+6. **Lifecycle Management**: When Electron closes, it automatically stops the C# server
 
 ## Development
 
@@ -117,10 +119,19 @@ cd frontend
 npm run dev
 ```
 
-For frontend development, you can modify `src/App.tsx` to use a fixed API URL instead of the window object:
+For frontend development, you can modify `src/App.tsx` to use a fixed API URL instead of the Electron-provided one:
 
 ```typescript
-const apiUrl = 'http://localhost:5000'
+const apiUrl = 'http://localhost:5000' // instead of window.electron?.apiUrl
+```
+
+### Electron Development
+
+The Electron app is written in TypeScript. To develop:
+
+```bash
+cd electron
+npm run dev  # Compiles TypeScript and runs Electron
 ```
 
 ## Building for Production

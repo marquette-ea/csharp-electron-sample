@@ -16,10 +16,11 @@ npm install
 npm run build
 cd ..
 
-# Install Electron dependencies
-echo "Installing Electron dependencies..."
+# Build Electron TypeScript
+echo "Building Electron TypeScript..."
 cd electron
 npm install
+npm run build
 cd ..
 
 echo "Build complete! Run 'cd electron && npm start' to launch the application."

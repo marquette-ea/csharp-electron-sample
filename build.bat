@@ -14,10 +14,11 @@ call npm install
 call npm run build
 cd ..
 
-REM Install Electron dependencies
-echo Installing Electron dependencies...
+REM Build Electron TypeScript
+echo Building Electron TypeScript...
 cd electron
 call npm install
+call npm run build
 cd ..
 
 echo Build complete! Run 'cd electron && npm start' to launch the application.

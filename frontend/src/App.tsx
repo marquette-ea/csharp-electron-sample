@@ -20,9 +20,22 @@ function App() {
   const [name, setName] = useState('World')
   const [greeting, setGreeting] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [apiUrl, setApiUrl] = useState('http://localhost:5000')
 
-  // Get API URL from window object (will be set by Electron) or use default
-  const apiUrl = (window as Window & { API_URL?: string }).API_URL || 'http://localhost:5000'
+  // Get API URL from Electron on mount
+  useEffect(() => {
+    const getApiUrl = async () => {
+      if (window.electron) {
+        try {
+          const url = await window.electron.getApiUrl()
+          setApiUrl(url)
+        } catch (err) {
+          console.error('Failed to get API URL from Electron:', err)
+        }
+      }
+    }
+    void getApiUrl()
+  }, [])
 
   const fetchServerStatus = useCallback(async () => {
     try {
@@ -61,9 +74,11 @@ function App() {
   }, [apiUrl, name])
 
   useEffect(() => {
-    void fetchServerStatus()
-    void fetchServerInfo()
-  }, [fetchServerStatus, fetchServerInfo])
+    if (apiUrl) {
+      void fetchServerStatus()
+      void fetchServerInfo()
+    }
+  }, [apiUrl, fetchServerStatus, fetchServerInfo])
 
   return (
     <>
