@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -22,14 +22,9 @@ function App() {
   const [error, setError] = useState<string | null>(null)
 
   // Get API URL from window object (will be set by Electron) or use default
-  const apiUrl = (window as any).API_URL || 'http://localhost:5000'
+  const apiUrl = (window as Window & { API_URL?: string }).API_URL || 'http://localhost:5000'
 
-  useEffect(() => {
-    fetchServerStatus()
-    fetchServerInfo()
-  }, [])
-
-  const fetchServerStatus = async () => {
+  const fetchServerStatus = useCallback(async () => {
     try {
       const response = await fetch(`${apiUrl}/`)
       const data = await response.json()
@@ -39,9 +34,9 @@ function App() {
       setError('Failed to connect to server')
       console.error(err)
     }
-  }
+  }, [apiUrl])
 
-  const fetchServerInfo = async () => {
+  const fetchServerInfo = useCallback(async () => {
     try {
       const response = await fetch(`${apiUrl}/api/info`)
       const data = await response.json()
@@ -51,9 +46,9 @@ function App() {
       setError('Failed to fetch server info')
       console.error(err)
     }
-  }
+  }, [apiUrl])
 
-  const fetchGreeting = async () => {
+  const fetchGreeting = useCallback(async () => {
     try {
       const response = await fetch(`${apiUrl}/api/hello/${encodeURIComponent(name)}`)
       const data = await response.json()
@@ -63,7 +58,12 @@ function App() {
       setError('Failed to fetch greeting')
       console.error(err)
     }
-  }
+  }, [apiUrl, name])
+
+  useEffect(() => {
+    void fetchServerStatus()
+    void fetchServerInfo()
+  }, [fetchServerStatus, fetchServerInfo])
 
   return (
     <>

@@ -19,5 +19,9 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Allow data fetching in useEffect - this is a common and valid pattern
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])

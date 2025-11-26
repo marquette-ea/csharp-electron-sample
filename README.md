@@ -20,28 +20,42 @@ This project demonstrates a desktop application built with:
 - [Node.js](https://nodejs.org/) (v18 or higher)
 - npm (comes with Node.js)
 
-## Setup & Build
+## Quick Start
 
-### 1. Build the C# Server
+### Build Everything (Recommended)
 
+**Linux/macOS:**
 ```bash
-cd Server
-dotnet build
+./build.sh
 ```
 
-### 2. Build the React Frontend
+**Windows:**
+```batch
+build.bat
+```
 
+### Manual Build
+
+**1. Build the C# Server:**
+```bash
+cd Server
+dotnet build -c Release
+cd ..
+```
+
+**2. Build the React Frontend:**
 ```bash
 cd frontend
 npm install
 npm run build
+cd ..
 ```
 
-### 3. Install Electron Dependencies
-
+**3. Install Electron Dependencies:**
 ```bash
 cd electron
 npm install
+cd ..
 ```
 
 ## Running the Application

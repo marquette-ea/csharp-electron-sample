@@ -17,8 +17,11 @@ function startCSharpServer() {
   return new Promise((resolve, reject) => {
     serverPort = getRandomPort();
     
-    // Path to the C# server
-    const serverPath = path.join(__dirname, '..', 'Server', 'bin', 'Debug', 'net10.0', 'Server.dll');
+    // Path to the C# server (try Release first, then Debug)
+    let serverPath = path.join(__dirname, '..', 'Server', 'bin', 'Release', 'net10.0', 'Server.dll');
+    if (!fs.existsSync(serverPath)) {
+      serverPath = path.join(__dirname, '..', 'Server', 'bin', 'Debug', 'net10.0', 'Server.dll');
+    }
     
     console.log(`Starting C# server on port ${serverPort}`);
     console.log(`Server path: ${serverPath}`);
