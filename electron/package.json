@@ -1,0 +1,25 @@
+{
+  "name": "electron-app",
+  "version": "1.0.0",
+  "description": "Electron app with C# ASP.NET backend and React frontend",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && electron .",
+    "dev": "npm run build && electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "electron",
+    "csharp",
+    "react",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "electron": "^39.2.4",
+    "typescript": "^5.9.3"
+  }
+}
