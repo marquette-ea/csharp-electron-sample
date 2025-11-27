@@ -15,16 +15,16 @@ function startCSharpServer(): Promise<number> {
     if (!fs.existsSync(serverPath)) {
       serverPath = path.join(__dirname, '..', '..', 'Server', 'bin', 'Debug', 'net10.0', 'Server.dll');
     }
-    
+
     console.log('Starting C# server with OS-assigned port');
     console.log(`Server path: ${serverPath}`);
-    
+
     // Check if server exists
     if (!fs.existsSync(serverPath)) {
       reject(new Error(`Server not found at ${serverPath}. Please build the server first.`));
       return;
     }
-    
+
     // Start the server with port 0 (OS assigns random port)
     serverProcess = spawn('dotnet', [serverPath, '0'], {
       cwd: path.join(__dirname, '..', '..', 'Server')
@@ -35,7 +35,7 @@ function startCSharpServer(): Promise<number> {
     serverProcess.stdout?.on('data', (data: Buffer) => {
       const output = data.toString();
       console.log(`Server: ${output}`);
-      
+
       // Look for the SERVER_PORT line
       const portMatch = output.match(/SERVER_PORT:(\d+)/);
       if (portMatch && !portResolved) {
@@ -95,12 +95,13 @@ function createWindow(port: number): void {
   // Load the React app
   const frontendPath = path.join(__dirname, '..', '..', 'frontend', 'dist', 'index.html');
   console.log(`Loading frontend from: ${frontendPath}`);
-  
+
   mainWindow.loadFile(frontendPath);
 
-  // Open DevTools for development/debugging
-  // In production, consider removing this or adding a condition
-  mainWindow.webContents.openDevTools();
+  // Open DevTools only in development
+  if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on('closed', () => {
     mainWindow = null;

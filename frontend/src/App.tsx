@@ -20,7 +20,7 @@ function App() {
   const [name, setName] = useState('World')
   const [greeting, setGreeting] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [apiUrl, setApiUrl] = useState('http://localhost:5000')
+  const [apiUrl, setApiUrl] = useState<string | null>(null)
 
   // Get API URL from Electron on mount
   useEffect(() => {
@@ -38,6 +38,7 @@ function App() {
   }, [])
 
   const fetchServerStatus = useCallback(async () => {
+    if (!apiUrl) return
     try {
       const response = await fetch(`${apiUrl}/`)
       const data = await response.json()
@@ -50,6 +51,7 @@ function App() {
   }, [apiUrl])
 
   const fetchServerInfo = useCallback(async () => {
+    if (!apiUrl) return
     try {
       const response = await fetch(`${apiUrl}/api/info`)
       const data = await response.json()
@@ -62,6 +64,7 @@ function App() {
   }, [apiUrl])
 
   const fetchGreeting = useCallback(async () => {
+    if (!apiUrl) return
     try {
       const response = await fetch(`${apiUrl}/api/hello/${encodeURIComponent(name)}`)
       const data = await response.json()
@@ -91,9 +94,9 @@ function App() {
         </a>
       </div>
       <h1>C# ASP.NET + TypeScript React + Electron</h1>
-      
+
       {error && <div style={{ color: 'red', margin: '1rem' }}>{error}</div>}
-      
+
       <div className="card">
         <h2>Server Status</h2>
         {serverStatus ? (

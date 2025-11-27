@@ -21,5 +21,4 @@ call npm install
 call npm run build
 cd ..
 
-echo Build complete! Run 'cd electron && npm start' to launch the application.
 pause
