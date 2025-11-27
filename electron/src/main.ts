@@ -16,7 +16,7 @@ function startCSharpServer(): Promise<number> {
       serverPath = path.join(__dirname, '..', '..', 'Server', 'bin', 'Debug', 'net10.0', 'Server.dll');
     }
 
-    console.log('Starting C# server with OS-assigned port');
+    console.log('Starting C# server');
     console.log(`Server path: ${serverPath}`);
 
     // Check if server exists
@@ -26,7 +26,7 @@ function startCSharpServer(): Promise<number> {
     }
 
     // Start the server with port 0 (OS assigns random port)
-    serverProcess = spawn('dotnet', [serverPath, '0'], {
+    serverProcess = spawn('dotnet', [serverPath], {
       cwd: path.join(__dirname, '..', '..', 'Server')
     });
 
