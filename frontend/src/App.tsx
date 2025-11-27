@@ -33,6 +33,9 @@ function App() {
           console.error('Failed to get API URL from Electron:', err)
         }
       }
+      else {
+        setApiUrl('http://localhost:5000')
+      }
     }
     void getApiUrl()
   }, [])
@@ -40,7 +43,7 @@ function App() {
   const fetchServerStatus = useCallback(async () => {
     if (!apiUrl) return
     try {
-      const response = await fetch(`${apiUrl}/`)
+      const response = await fetch(`${apiUrl}/api/status`)
       const data = await response.json()
       setServerStatus(data)
       setError(null)

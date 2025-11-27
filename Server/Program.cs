@@ -19,20 +19,62 @@ var app = builder.Build();
 // Use CORS
 app.UseCors("AllowAll");
 
-// Minimal API endpoints
-app.MapGet("/", () => new { message = "C# ASP.NET Server Running", status = "ok" });
+// Configure static file serving for frontend dist folder
+var frontendPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "dist");
+if (Directory.Exists(frontendPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(frontendPath),
+        RequestPath = ""
+    });
+}
+else
+{
+    Console.WriteLine("Warning: Frontend dist folder not found at " + frontendPath);
+}
 
-app.MapGet("/api/info", () => new 
-{ 
+// Redirect root to index.html
+app.MapGet("/", () => Results.Redirect("/index.html"));
+
+app.MapGet("/api/status", () => new
+{
+    status = "OK",
+    message = "Server is running",
+    timestamp = DateTime.UtcNow
+});
+
+app.MapGet("/api/info", () => new
+{
     server = "ASP.NET Core",
     version = "10.0",
     timestamp = DateTime.UtcNow
 });
 
-app.MapGet("/api/hello/{name}", (string name) => new 
-{ 
+app.MapGet("/api/hello/{name}", (string name) => new
+{
     message = $"Hello, {name}!",
     timestamp = DateTime.UtcNow
+});
+
+// Fallback route for SPA - serve index.html for any unmatched routes (except API routes)
+app.MapFallback(async context =>
+{
+    // Only serve index.html for non-API routes
+    if (!context.Request.Path.StartsWithSegments("/api"))
+    {
+        var indexPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "dist", "index.html");
+        if (File.Exists(indexPath))
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync(indexPath);
+        }
+        else
+        {
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsync("Frontend not built. Run 'npm run build' in the frontend folder.");
+        }
+    }
 });
 
 // Get port from command line args or use 0 (OS assigns random port)
@@ -46,7 +88,7 @@ app.Lifetime.ApplicationStarted.Register(() =>
 {
     var addresses = app.Services.GetRequiredService<Microsoft.AspNetCore.Hosting.Server.IServer>()
         .Features.Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()?.Addresses;
-    
+
     if (addresses != null && addresses.Any())
     {
         var address = addresses.First();
