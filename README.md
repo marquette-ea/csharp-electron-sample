@@ -26,12 +26,12 @@ This project demonstrates a desktop application built with:
 
 **Linux/macOS:**
 ```bash
-./build.sh
+. ./build.sh
 ```
 
 **Windows:**
 ```batch
-build.bat
+cmd /c build.bat
 ```
 
 ### Manual Build
@@ -61,38 +61,33 @@ cd ..
 
 ## Running the Application
 
-### Option 1: Run with Electron (Recommended)
+### Option 1: Run with Electron
 
 This will start the C# server on a random port and open the Electron window:
 
+**Linux/macOS:**
 ```bash
-cd electron
-npm start
+. ./electron.sh
 ```
 
-### Option 2: Run Components Separately (Development)
-
-**Terminal 1 - Start C# Server:**
-```bash
-cd Server
-dotnet run 5000
+**Windows:**
+```batch
+cmd /c electron.bat
 ```
 
-**Terminal 2 - Start React Dev Server:**
+### Option 2: Run as a web server
+
+This will start the C# server port 5000, after which you can open in your browser at https://localhost:5000
+
+**Linux/macOS:**
 ```bash
-cd frontend
-npm run dev
+. ./web.sh
 ```
 
-Then open your browser to `http://localhost:5173`
-
-## API Endpoints
-
-The C# server provides the following endpoints:
-
-- `GET /` - Server status
-- `GET /api/info` - Server information (version, timestamp)
-- `GET /api/hello/{name}` - Personalized greeting
+**Windows:**
+```batch
+cmd /c web.bat
+```
 
 ## How It Works
 
@@ -119,12 +114,6 @@ cd frontend
 npm run dev
 ```
 
-For frontend development, you can modify `src/App.tsx` to use a fixed API URL instead of the Electron-provided one:
-
-```typescript
-const apiUrl = 'http://localhost:5000' // instead of window.electron?.apiUrl
-```
-
 ### Electron Development
 
 The Electron app is written in TypeScript. To develop:
@@ -149,7 +138,3 @@ npm run build
 ```
 
 3. Package the Electron app (requires additional configuration with electron-builder or similar)
-
-## License
-
-ISC

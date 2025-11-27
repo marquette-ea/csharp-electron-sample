@@ -1,3 +1,3 @@
 cd Server
-dotnet run
+dotnet run -- 5000
 cd ..
