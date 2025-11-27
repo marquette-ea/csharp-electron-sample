@@ -1,3 +1,6 @@
+using System.Net;
+using System.Net.Sockets;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS for React frontend
@@ -35,9 +38,18 @@ app.MapGet("/api/hello/{name}", (string name) => new
     timestamp = DateTime.UtcNow
 });
 
-// Get port from command line args or use 5000 as default
-var port = args.Length > 0 && int.TryParse(args[0], out var p) ? p : 5000;
+// Function to get a random available port
+static int GetAvailablePort()
+{
+    using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+    socket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+    return ((IPEndPoint)socket.LocalEndPoint!).Port;
+}
+
+// Get port from command line args or find an available port
+var port = args.Length > 0 && int.TryParse(args[0], out var p) ? p : GetAvailablePort();
 app.Urls.Add($"http://localhost:{port}");
 
-Console.WriteLine($"Server starting on http://localhost:{port}");
+// Output the port to stderr for Electron to parse (to avoid ASP.NET logging interference)
+Console.Error.WriteLine($"SERVER_PORT:{port}");
 app.Run();
