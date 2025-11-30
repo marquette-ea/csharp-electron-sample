@@ -1,0 +1,23 @@
+{
+  "name": "tauri-app",
+  "version": "1.0.0",
+  "description": "Tauri app with C# ASP.NET backend and React frontend",
+  "type": "module",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri"
+  },
+  "keywords": [
+    "tauri",
+    "csharp",
+    "react",
+    "typescript",
+    "rust"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.4"
+  }
+}

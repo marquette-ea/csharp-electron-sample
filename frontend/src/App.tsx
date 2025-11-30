@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { tauriAPI } from './tauri'
 
 interface ServerInfo {
   server?: string
@@ -21,19 +22,36 @@ function App() {
   const [greeting, setGreeting] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [apiUrl, setApiUrl] = useState<string | null>(null)
+  const [platform, setPlatform] = useState<'electron' | 'tauri' | 'web'>('web')
 
-  // Get API URL from Electron on mount
+  // Get API URL from Electron or Tauri on mount
   useEffect(() => {
     const getApiUrl = async () => {
-      if (window.electron) {
+      // Check if running in Tauri
+      if (window.__TAURI__) {
+        setPlatform('tauri')
+        try {
+          const url = await tauriAPI.getApiUrl()
+          setApiUrl(url)
+        } catch (err) {
+          console.error('Failed to get API URL from Tauri:', err)
+          setApiUrl('http://localhost:5000')
+        }
+      }
+      // Check if running in Electron
+      else if (window.electron) {
+        setPlatform('electron')
         try {
           const url = await window.electron.getApiUrl()
           setApiUrl(url)
         } catch (err) {
           console.error('Failed to get API URL from Electron:', err)
+          setApiUrl('http://localhost:5000')
         }
       }
+      // Fallback for web/development
       else {
+        setPlatform('web')
         setApiUrl('http://localhost:5000')
       }
     }
@@ -96,7 +114,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>C# ASP.NET + TypeScript React + Electron</h1>
+      <h1>C# ASP.NET + TypeScript React + {platform === 'tauri' ? 'Tauri' : platform === 'electron' ? 'Electron' : 'Web'}</h1>
 
       {error && <div style={{ color: 'red', margin: '1rem' }}>{error}</div>}
 
@@ -139,7 +157,7 @@ function App() {
       </div>
 
       <p className="read-the-docs">
-        API URL: {apiUrl}
+        Platform: {platform} | API URL: {apiUrl}
       </p>
     </>
   )

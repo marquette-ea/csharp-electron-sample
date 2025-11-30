@@ -1,9 +1,9 @@
-# C# ASP.NET + TypeScript React + Electron Sample
+# C# ASP.NET + TypeScript React + Desktop App Sample
 
 This project demonstrates a desktop application built with:
 - **Backend**: C# ASP.NET Core minimal API (runs on a random port)
 - **Frontend**: TypeScript React with Vite
-- **Desktop**: Electron wrapper
+- **Desktop**: Both Electron and Tauri wrapper options
 
 ## Project Structure
 
@@ -11,7 +11,8 @@ This project demonstrates a desktop application built with:
 .
 ├── Server/          # C# ASP.NET Core minimal API
 ├── frontend/        # TypeScript React application
-└── electron/        # Electron wrapper application
+├── electron/        # Electron wrapper application
+└── tauri/           # Tauri wrapper application (Rust-based alternative)
 ```
 
 ## Prerequisites
@@ -19,6 +20,7 @@ This project demonstrates a desktop application built with:
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
 - [Node.js](https://nodejs.org/) (v18 or higher)
 - npm (comes with Node.js)
+- [Rust](https://rustup.rs/) (for Tauri - latest stable version)
 
 ## Quick Start
 
@@ -75,7 +77,21 @@ This will start the C# server on a random port and open the Electron window:
 cmd /c electron.bat
 ```
 
-### Option 2: Run as a web server
+### Option 2: Run with Tauri (Rust-based alternative)
+
+This will start the C# server on a random port and open the Tauri window:
+
+**Linux/macOS:**
+```bash
+. ./tauri-dev.sh
+```
+
+**Windows:**
+```batch
+cmd /c tauri-dev.bat
+```
+
+### Option 3: Run as a web server
 
 This will start the C# server port 5000, after which you can open in your browser at https://localhost:5000
 
@@ -91,12 +107,23 @@ cmd /c web.bat
 
 ## How It Works
 
+### Electron Version
 1. **Electron Startup**: The Electron main process (`electron/dist/main.js` compiled from TypeScript) starts first
 2. **C# Server**: Electron spawns the C# server process with port 0 (OS assigns a random available port)
 3. **Port Discovery**: The server outputs `SERVER_PORT:XXXXX` to stdout, which Electron parses to get the actual port
 4. **Frontend Loading**: Electron loads the built React app from `frontend/dist`
 5. **API Communication**: The React app communicates with the C# server via `window.electron.apiUrl` exposed through Electron's preload script
 6. **Lifecycle Management**: When Electron closes, it automatically stops the C# server
+
+### Tauri Version
+1. **Tauri Startup**: The Tauri Rust application (`tauri/src-tauri/src/main.rs`) starts first
+2. **C# Server**: Tauri spawns the C# server process with port 0 (OS assigns a random available port)
+3. **Port Discovery**: The server outputs `SERVER_PORT:XXXXX` to stdout, which Tauri parses to get the actual port
+4. **Frontend Loading**: Tauri loads the built React app from `frontend/dist`
+5. **API Communication**: The React app communicates with the C# server via Tauri's invoke system
+6. **Lifecycle Management**: When Tauri closes, it automatically stops the C# server
+
+The React frontend automatically detects whether it's running in Electron, Tauri, or as a web app and adjusts accordingly.
 
 ## Development
 
@@ -123,6 +150,15 @@ cd electron
 npm run dev  # Compiles TypeScript and runs Electron
 ```
 
+### Tauri Development
+
+The Tauri app is written in Rust. To develop:
+
+```bash
+cd tauri
+npm run dev  # Runs Tauri in development mode
+```
+
 ## Building for Production
 
 1. Build the C# server in Release mode:
@@ -138,3 +174,19 @@ npm run build
 ```
 
 3. Package the Electron app (requires additional configuration with electron-builder or similar)
+
+### Building Tauri for Production
+
+For Tauri, use the provided build script:
+
+**Linux/macOS:**
+```bash
+. ./tauri.sh
+```
+
+**Windows:**
+```batch
+cmd /c tauri.bat
+```
+
+This creates distributable packages in `tauri/src-tauri/target/release/bundle/`.
